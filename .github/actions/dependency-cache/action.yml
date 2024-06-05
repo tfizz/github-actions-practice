@@ -1,0 +1,15 @@
+name: Install & Cache Dependencies
+description: "Install & Cache Dependencies"
+outputs:
+  cache-hit:
+    description: "Dependencies loaded from cache"
+    value: ${{ steps.npm-cache.outputs.cache-hit }}
+runs:
+  using: composite
+  steps:
+    - name: Cache Dependencies
+      uses: actions/cache@v3
+      id: npm-cache
+      with:
+        path: node_modules
+        key: node_modules-${{ hashFiles('**/package*.json') }}

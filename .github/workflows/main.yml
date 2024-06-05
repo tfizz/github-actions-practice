@@ -1,0 +1,28 @@
+name: Main
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Load Cached Dependencies
+        id: dependency-cache
+        uses: ./.github/actions/dependency-cache
+      - name: Install Dependencies
+        if: ${{ steps.dependency-cache.outputs.cache-hit != 'true' }}
+        run: npm ci
+  lint:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install Dependencies
+        uses: ./.github/actions/dependency-cache
+      - name: Run Lint
+        run: npm run lint
