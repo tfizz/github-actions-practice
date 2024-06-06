@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Load Cached Dependencies
         id: dependency-cache
         uses: ./.github/actions/dependency-cache
@@ -21,7 +21,7 @@ jobs:
     needs: [build]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Dependencies
         uses: ./.github/actions/dependency-cache
       - name: Run Lint
@@ -31,7 +31,7 @@ jobs:
     needs: [build]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Dependencies
         uses: ./.github/actions/dependency-cache
       - name: Run Tests
@@ -41,7 +41,7 @@ jobs:
     needs: [lint, test]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Dependencies
         uses: ./.github/actions/dependency-cache
       - name: Build
@@ -49,5 +49,17 @@ jobs:
       - name: Package
         uses: actions/upload-artifact@v4
         with:
-          name: dist
-          path: dist
+          name: artifact
+          path: |
+            dist
+            Dockerfile
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [package]
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifact
+      - name: List files
+        run: ls
